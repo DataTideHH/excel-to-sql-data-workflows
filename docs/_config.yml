@@ -1,0 +1,21 @@
+theme: jekyll-theme-cayman
+title: Excel to SQL Data Workflows
+description: Equivalent analytical intent across Excel, Power Query, SQL Server and Power BI
+show_downloads: false
+repository: DataTideHH/excel-to-sql-data-workflows
+url: https://datatidehh.github.io
+baseurl: /excel-to-sql-data-workflows
+lang: en
+
+plugins:
+  - jekyll-relative-links
+
+relative_links:
+  enabled: true
+  collections: true
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default
