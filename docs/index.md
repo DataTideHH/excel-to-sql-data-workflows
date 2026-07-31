@@ -5,9 +5,9 @@ description: Equivalent analytical intent across Excel, Power Query, SQL Server 
 
 # Excel to SQL Data Workflows
 
-**One bounded sales-order scenario, four analytical tools, and one shared business logic.**
+**One bounded sales-order scenario, four analytical tools, and one shared business question.**
 
-[View repository](https://github.com/DataTideHH/excel-to-sql-data-workflows) · [View CI](https://github.com/DataTideHH/excel-to-sql-data-workflows/actions/workflows/python-quality.yml) · [Download the Excel workbook](https://github.com/DataTideHH/excel-to-sql-data-workflows/raw/main/excel/excel_sql_workflows.xlsx) · [DataTideHH portfolio](https://datatidehh.de/)
+[View repository](https://github.com/DataTideHH/excel-to-sql-data-workflows) · [View quality CI](https://github.com/DataTideHH/excel-to-sql-data-workflows/actions/workflows/python-quality.yml) · [Download the Excel workbook](https://github.com/DataTideHH/excel-to-sql-data-workflows/raw/main/excel/excel_sql_workflows.xlsx) · [DataTideHH portfolio](https://datatidehh.de/)
 
 ---
 
@@ -31,8 +31,8 @@ The important question is not whether four expressions look alike. It is whether
 | Area | Evidence |
 |---|---|
 | Cross-tool reasoning | One business scenario implemented across Excel, Power Query, T-SQL and DAX |
-| Reproducibility | Six deterministic CSV artifacts and one byte-stable Excel workbook |
-| Automated verification | 19 pytest tests plus Ruff |
+| Reproducibility | Six committed CSV artifacts: three source datasets and three expected analytical outputs |
+| Automated verification | Ruff plus 19 pytest tests |
 | Cross-platform CI | Windows and Ubuntu matrix with committed-artifact drift checks |
 | Data-quality thinking | Missing values, duplicate lookup keys and ambiguous joins are included intentionally |
 | Honest scope | Synthetic data, no `.pbix`, and no claim of a production data platform |
@@ -133,7 +133,7 @@ Read [Semantic Differences](semantic-differences.md) for the full discussion.
 3. Inspect the source data under [`data/raw`](https://github.com/DataTideHH/excel-to-sql-data-workflows/tree/main/data/raw) and expected outputs under [`data/expected`](https://github.com/DataTideHH/excel-to-sql-data-workflows/tree/main/data/expected).
 4. Compare the [Excel workbook](https://github.com/DataTideHH/excel-to-sql-data-workflows/raw/main/excel/excel_sql_workflows.xlsx) with the [T-SQL equivalents](https://github.com/DataTideHH/excel-to-sql-data-workflows/blob/main/sql/03_excel_sql_equivalents.sql).
 5. Review the [DAX measures](https://github.com/DataTideHH/excel-to-sql-data-workflows/blob/main/power-bi/dax-measures.md) and [Power Query M](https://github.com/DataTideHH/excel-to-sql-data-workflows/blob/main/power-bi/power-query-m.md).
-6. Inspect the automated tests and successful Windows/Ubuntu CI matrix.
+6. Inspect the [automated tests and Windows/Ubuntu CI matrix](https://github.com/DataTideHH/excel-to-sql-data-workflows/actions/workflows/python-quality.yml).
 
 ---
 
@@ -142,7 +142,7 @@ Read [Semantic Differences](semantic-differences.md) for the full discussion.
 Windows PowerShell 7:
 
 ```powershell
-python -m venv .venv
+py -3.12 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 .\.venv\Scripts\python.exe scripts/generate_sample_data.py
 .\.venv\Scripts\python.exe scripts/generate_expected_results.py
@@ -152,7 +152,7 @@ python -m venv .venv
 git diff --exit-code data/raw data/expected excel/excel_sql_workflows.xlsx
 ```
 
-The final command verifies that regenerated artifacts match the committed CSV files and workbook exactly.
+The commands call the project virtual environment directly, so activation is optional. The final command verifies that regenerated artifacts match the committed CSV files and workbook exactly.
 
 ---
 
@@ -173,3 +173,9 @@ These boundaries keep the project compact, reviewable and technically honest.
 This is a focused Data/BI portfolio project. Its value lies in translating business logic across tools, documenting semantic differences, designing controlled data-quality edge cases and proving reproducible outputs through automated tests and cross-platform CI.
 
 The project complements the broader [DataTideHH portfolio](https://datatidehh.de/) without presenting a learning repository as an enterprise analytics product.
+
+---
+
+## License
+
+This project is licensed under the MIT License. See the repository [LICENSE](https://github.com/DataTideHH/excel-to-sql-data-workflows/blob/main/LICENSE).
