@@ -1,6 +1,18 @@
 # excel-to-sql-data-workflows
 
-A compact reference project that demonstrates equivalent analytical intent across Excel formulas, Power Query M, SQL Server T-SQL, and Power BI DAX.
+A compact portfolio project showing how the same analytical questions can be expressed across Excel formulas, Power Query M, SQL Server T-SQL, and Power BI DAX.
+
+It is about equivalent analytical intent, not literal one-to-one translation. The point of the repository is to show where the tools align, where they diverge, and how those differences affect business logic.
+
+## What This Shows Early
+- Cross-tool comparison on one bounded sales-order scenario instead of disconnected examples.
+- Deterministic artifact generation for six CSV outputs and one Excel workbook.
+- GitHub Actions matrix passing on Windows and Ubuntu with Python 3.12, Ruff, 19 pytest tests, and committed-artifact drift verification.
+
+## Start Here
+If you are reviewing this repository quickly:
+- Recruiter or hiring manager: read [Purpose](#purpose), [What This Shows Early](#what-this-shows-early), and [Suggested Reviewer Path](#suggested-reviewer-path).
+- Technical reviewer: start with `docs/comparison-matrix.md`, `docs/semantic-differences.md`, `sql/03_excel_sql_equivalents.sql`, `sql/04_window_functions.sql`, and `tests/test_sample_data.py`.
 
 ## Purpose
 This repository helps reviewers compare how the same business analysis tasks are implemented in different tools. It is intentionally bounded to a small synthetic sales-order scenario and does not position itself as a production data platform.
@@ -14,6 +26,11 @@ This repository helps reviewers compare how the same business analysis tasks are
 - Power BI Desktop + DAX
 - pytest + ruff
 - GitHub Actions
+
+## Strongest Technical Evidence
+- The generated data and workbook are reproducible, including cross-platform artifact checks in CI.
+- Tests cover deterministic generation, schema constraints, key relationships, grouped analytical outputs, duplicate detection, exact LF CSV output, and byte-stable workbook packaging.
+- The workbook is generated without Excel automation or macros and is normalized after save for byte-stable ZIP packaging.
 
 ## Business Scenario
 A deterministic fictional sales-order dataset includes:
@@ -56,9 +73,16 @@ These are equivalences in analytical intent, not guaranteed identical operations
 - Filtering behavior differs between worksheet filters, SQL predicates, and Power BI filter context.
 - Case sensitivity and text comparison depend on engine configuration and collation settings.
 
+## Equivalent Intent vs Literal Translation
+- This repository compares the same business task across tools, not syntax conversion in isolation.
+- Some mappings are close equivalents, such as `SUMIFS` and grouped SQL aggregations with predicates.
+- Some mappings intentionally expose semantic differences, especially lookups with non-unique keys, blank or null handling, ranking ties, and running totals that depend on stable ordering.
+- Reviewers should expect similar analytical goals with different execution models, not interchangeable code.
+
 ## Repository Structure
 ```text
 excel-to-sql-data-workflows/
+├── .gitattributes
 ├── .github/workflows/python-quality.yml
 ├── data/
 │   ├── raw/
@@ -86,17 +110,17 @@ excel-to-sql-data-workflows/
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-python scripts/generate_sample_data.py
-python scripts/generate_expected_results.py
-python scripts/generate_excel_workbook.py
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe scripts/generate_sample_data.py
+.\.venv\Scripts\python.exe scripts/generate_expected_results.py
+.\.venv\Scripts\python.exe scripts/generate_excel_workbook.py
 ```
 
 ## Excel Workbook Generation
 Generate `excel/excel_sql_workflows.xlsx` from committed CSV files:
 
 ```powershell
-python scripts/generate_excel_workbook.py
+.\.venv\Scripts\python.exe scripts/generate_excel_workbook.py
 ```
 
 ## SQL Server Execution Instructions
@@ -114,22 +138,25 @@ python scripts/generate_excel_workbook.py
 
 ## Testing and Quality
 ```powershell
-ruff check .
-pytest
+.\.venv\Scripts\python.exe -m ruff check .
+.\.venv\Scripts\python.exe -m pytest
+git diff --exit-code data/raw data/expected excel/excel_sql_workflows.xlsx
 ```
 
-Tests verify deterministic generation, schema constraints, key relationships, revenue calculations, grouped outputs, duplicate checks, and running totals.
+Tests verify deterministic generation, schema constraints, key relationships, revenue calculations, grouped outputs, duplicate checks, running totals, exact LF CSV line endings, workbook byte stability, canonical ZIP metadata, and workbook loadability after normalization.
 
 ## Suggested Reviewer Path
-1. Read `docs/comparison-matrix.md` and `docs/semantic-differences.md`.
-2. Inspect source data under `data/raw`.
-3. Review SQL patterns in `sql/03_excel_sql_equivalents.sql` and `sql/04_window_functions.sql`.
-4. Open `excel/excel_sql_workflows.xlsx` and compare workbook formulas with SQL.
-5. Review `power-bi/dax-measures.md` and `power-bi/power-query-m.md`.
-6. Run tests.
+1. Read `docs/comparison-matrix.md` for the cross-tool map.
+2. Read `docs/semantic-differences.md` to see where similar-looking logic diverges.
+3. Inspect the synthetic source data in `data/raw` and expected outputs in `data/expected`.
+4. Review `sql/03_excel_sql_equivalents.sql` and `sql/04_window_functions.sql` for the clearest T-SQL comparisons.
+5. Open `excel/excel_sql_workflows.xlsx` and compare its formulas and tables with the SQL patterns.
+6. Review `power-bi/dax-measures.md` and `power-bi/power-query-m.md` for the Power BI side of the same scenario.
+7. Run the quality commands if you want to verify deterministic regeneration locally.
 
 ## Limitations and Scope
 - Synthetic data only; no real customer information.
 - No `.pbix` committed.
 - Not a formula translator and not a production BI platform.
+- T-SQL scripts are documented and reviewed, but not yet runtime-tested against a live SQL Server instance in this repository.
 - SQL load script assumes local file access permissions for `BULK INSERT`.
