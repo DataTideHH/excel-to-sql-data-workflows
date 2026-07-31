@@ -1,12 +1,24 @@
 from __future__ import annotations
 
 import csv
+import hashlib
+import zipfile
 from pathlib import Path
 
+from openpyxl import load_workbook
+
 from scripts.data_logic import CUSTOMERS, PRODUCTS, build_orders, revenue_from_order
+from scripts.generate_excel_workbook import (
+    CANONICAL_EXTERNAL_ATTR,
+    FIXED_TIMESTAMP,
+    FIXED_W3CDTF_TIMESTAMP,
+    OUTPUT_PATH,
+    generate_workbook,
+)
+from scripts.generate_expected_results import EXPECTED_DIR, generate_expected_results
+from scripts.generate_sample_data import CSV_LINE_TERMINATOR, RAW_DIR, generate_raw_data
 
 ROOT = Path(__file__).resolve().parents[1]
-RAW_DIR = ROOT / "data" / "raw"
 
 
 REQUIRED_CUSTOMER_COLUMNS = {
@@ -41,6 +53,10 @@ REQUIRED_ORDER_COLUMNS = {
 def _read_csv(path: Path) -> list[dict[str, str]]:
     with path.open("r", newline="", encoding="utf-8") as handle:
         return list(csv.DictReader(handle))
+
+
+def _sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def test_generated_row_counts() -> None:
@@ -124,3 +140,55 @@ def test_missing_values_exist() -> None:
 def test_scripts_reference_constants() -> None:
     assert len(CUSTOMERS) == 12
     assert len(PRODUCTS) == 7
+
+
+def test_generated_csv_files_use_lf_line_endings() -> None:
+    generate_raw_data()
+    generate_expected_results()
+    for path in sorted([*RAW_DIR.glob("*.csv"), *EXPECTED_DIR.glob("*.csv")]):
+        data = path.read_bytes()
+        assert b"\r\n" not in data, path.as_posix()
+        assert data.endswith(CSV_LINE_TERMINATOR.encode("ascii")), path.as_posix()
+
+
+def test_workbook_generation_is_byte_identical_across_runs(tmp_path: Path) -> None:
+    generate_raw_data()
+    generate_workbook()
+    first_hash = _sha256(OUTPUT_PATH)
+    first_copy = tmp_path / "first.xlsx"
+    first_copy.write_bytes(OUTPUT_PATH.read_bytes())
+
+    generate_workbook()
+    second_hash = _sha256(OUTPUT_PATH)
+
+    assert first_hash == second_hash
+    assert first_copy.read_bytes() == OUTPUT_PATH.read_bytes()
+
+
+def test_workbook_zip_metadata_is_canonical() -> None:
+    generate_workbook()
+
+    with zipfile.ZipFile(OUTPUT_PATH, "r") as archive:
+        infos = archive.infolist()
+        assert [info.filename for info in infos] == sorted(info.filename for info in infos)
+
+        for info in infos:
+            assert info.date_time == FIXED_TIMESTAMP
+            assert info.compress_type == zipfile.ZIP_STORED
+            assert info.create_system == 3
+            assert info.external_attr == CANONICAL_EXTERNAL_ATTR
+            assert info.flag_bits == 0
+            assert info.comment == b""
+            assert info.extra == b""
+
+        core_xml = archive.read("docProps/core.xml").decode("utf-8")
+
+    assert FIXED_W3CDTF_TIMESTAMP in core_xml
+    assert core_xml.count(FIXED_W3CDTF_TIMESTAMP) == 2
+
+
+def test_workbook_loads_after_normalization() -> None:
+    generate_workbook()
+    workbook = load_workbook(OUTPUT_PATH)
+
+    assert workbook.sheetnames == ["Customers", "Products", "Orders", "Exercises", "Summary"]

@@ -16,6 +16,7 @@ from scripts.data_logic import revenue_from_order
 ROOT = Path(__file__).resolve().parents[1]
 RAW_DIR = ROOT / "data" / "raw"
 EXPECTED_DIR = ROOT / "data" / "expected"
+CSV_LINE_TERMINATOR = "\n"
 
 
 def _read_csv(path: Path) -> list[dict[str, str]]:
@@ -29,7 +30,11 @@ def _write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         raise ValueError(f"Cannot write empty dataset to {path}")
 
     with path.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(rows[0].keys()))
+        writer = csv.DictWriter(
+            handle,
+            fieldnames=list(rows[0].keys()),
+            lineterminator=CSV_LINE_TERMINATOR,
+        )
         writer.writeheader()
         writer.writerows(rows)
 

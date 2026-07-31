@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import csv
+import re
+import shutil
 import zipfile
 from datetime import datetime
 from pathlib import Path
@@ -15,6 +17,9 @@ ROOT = Path(__file__).resolve().parents[1]
 RAW_DIR = ROOT / "data" / "raw"
 OUTPUT_PATH = ROOT / "excel" / "excel_sql_workflows.xlsx"
 FIXED_TIMESTAMP = (2026, 1, 1, 0, 0, 0)
+FIXED_W3CDTF_TIMESTAMP = "2026-01-01T00:00:00Z"
+CANONICAL_EXTERNAL_ATTR = 0o100644 << 16
+CORE_XML_PATH = "docProps/core.xml"
 
 
 def _read_csv(path: Path) -> list[dict[str, str]]:
@@ -145,17 +150,61 @@ def _build_summary_sheet(workbook: Workbook, orders_count: int) -> None:
     sheet.column_dimensions["B"].width = 72
 
 
+def _normalize_core_properties(xml_bytes: bytes) -> bytes:
+    xml_text = xml_bytes.decode("utf-8")
+    xml_text = re.sub(
+        r"<dcterms:created xsi:type=\"dcterms:W3CDTF\">.*?</dcterms:created>",
+        (
+            "<dcterms:created xsi:type=\"dcterms:W3CDTF\">"
+            f"{FIXED_W3CDTF_TIMESTAMP}"
+            "</dcterms:created>"
+        ),
+        xml_text,
+        count=1,
+    )
+    xml_text = re.sub(
+        r"<dcterms:modified xsi:type=\"dcterms:W3CDTF\">.*?</dcterms:modified>",
+        (
+            "<dcterms:modified xsi:type=\"dcterms:W3CDTF\">"
+            f"{FIXED_W3CDTF_TIMESTAMP}"
+            "</dcterms:modified>"
+        ),
+        xml_text,
+        count=1,
+    )
+    return xml_text.encode("utf-8")
+
+
+def _canonical_zip_info(name: str, payload: bytes) -> zipfile.ZipInfo:
+    info = zipfile.ZipInfo(filename=name, date_time=FIXED_TIMESTAMP)
+    info.compress_type = zipfile.ZIP_STORED
+    info.create_system = 3
+    info.external_attr = CANONICAL_EXTERNAL_ATTR
+    info.flag_bits = 0
+    info.comment = b""
+    info.extra = b""
+    info.internal_attr = 0
+    info.file_size = len(payload)
+    info.CRC = zipfile.crc32(payload) & 0xFFFFFFFF
+    return info
+
+
 def _normalize_xlsx_zip(path: Path) -> None:
-    """Rewrite XLSX zip entries with stable ordering and timestamps."""
-    temp_path = path.with_suffix(".tmp")
+    """Rewrite XLSX zip entries with canonical metadata and byte-stable storage."""
+    temp_path = path.with_name(f"{path.stem}.canonical{path.suffix}")
     with zipfile.ZipFile(path, "r") as source:
-        names = sorted(source.namelist())
-        with zipfile.ZipFile(temp_path, "w", compression=zipfile.ZIP_DEFLATED) as target:
-            for name in names:
-                info = zipfile.ZipInfo(filename=name, date_time=FIXED_TIMESTAMP)
-                info.compress_type = zipfile.ZIP_DEFLATED
-                target.writestr(info, source.read(name))
-    temp_path.replace(path)
+        entries: list[tuple[str, bytes]] = []
+        for name in sorted(source.namelist()):
+            payload = source.read(name)
+            if name == CORE_XML_PATH:
+                payload = _normalize_core_properties(payload)
+            entries.append((name, payload))
+
+    with zipfile.ZipFile(temp_path, "w", compression=zipfile.ZIP_STORED) as target:
+        for name, payload in entries:
+            target.writestr(_canonical_zip_info(name, payload), payload)
+
+    shutil.move(temp_path, path)
 
 
 def generate_workbook() -> None:
