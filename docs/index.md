@@ -7,7 +7,7 @@ description: Equivalent analytical intent across Excel, Power Query, SQL Server 
 
 **One bounded sales-order scenario, four analytical tools, and one shared business logic.**
 
-[View repository](https://github.com/DataTideHH/excel-to-sql-data-workflows) · [View CI](https://github.com/DataTideHH/excel-to-sql-data-workflows/actions/workflows/python-quality.yml) · [Open the Excel workbook](../excel/excel_sql_workflows.xlsx) · [DataTideHH portfolio](https://datatidehh.de/)
+[View repository](https://github.com/DataTideHH/excel-to-sql-data-workflows) · [View CI](https://github.com/DataTideHH/excel-to-sql-data-workflows/actions/workflows/python-quality.yml) · [Download the Excel workbook](https://github.com/DataTideHH/excel-to-sql-data-workflows/raw/main/excel/excel_sql_workflows.xlsx) · [DataTideHH portfolio](https://datatidehh.de/)
 
 ---
 
@@ -100,29 +100,29 @@ Read [Semantic Differences](semantic-differences.md) for the full discussion.
 
 ### Excel
 
-- [Generated workbook](../excel/excel_sql_workflows.xlsx)
-- [Workbook guide](../excel/README.md)
-- [Formula reference](../excel/formulas-reference.md)
+- [Generated workbook](https://github.com/DataTideHH/excel-to-sql-data-workflows/raw/main/excel/excel_sql_workflows.xlsx)
+- [Workbook guide](https://github.com/DataTideHH/excel-to-sql-data-workflows/blob/main/excel/README.md)
+- [Formula reference](https://github.com/DataTideHH/excel-to-sql-data-workflows/blob/main/excel/formulas-reference.md)
 
 ### SQL Server
 
-- [Excel and SQL equivalents](../sql/03_excel_sql_equivalents.sql)
-- [Window functions](../sql/04_window_functions.sql)
-- [Data-quality checks](../sql/05_data_quality_checks.sql)
-- [Reporting queries](../sql/06_reporting_queries.sql)
+- [Excel and SQL equivalents](https://github.com/DataTideHH/excel-to-sql-data-workflows/blob/main/sql/03_excel_sql_equivalents.sql)
+- [Window functions](https://github.com/DataTideHH/excel-to-sql-data-workflows/blob/main/sql/04_window_functions.sql)
+- [Data-quality checks](https://github.com/DataTideHH/excel-to-sql-data-workflows/blob/main/sql/05_data_quality_checks.sql)
+- [Reporting queries](https://github.com/DataTideHH/excel-to-sql-data-workflows/blob/main/sql/06_reporting_queries.sql)
 
 ### Power BI
 
-- [DAX measures](../power-bi/dax-measures.md)
-- [Power Query M](../power-bi/power-query-m.md)
+- [DAX measures](https://github.com/DataTideHH/excel-to-sql-data-workflows/blob/main/power-bi/dax-measures.md)
+- [Power Query M](https://github.com/DataTideHH/excel-to-sql-data-workflows/blob/main/power-bi/power-query-m.md)
 - [Data-model guidance](data-model.md)
 
 ### Reproducibility and quality
 
 - [Python quality workflow](https://github.com/DataTideHH/excel-to-sql-data-workflows/blob/main/.github/workflows/python-quality.yml)
-- [Sample-data tests](../tests/test_sample_data.py)
-- [Expected-result tests](../tests/test_expected_results.py)
-- [Workbook generator](../scripts/generate_excel_workbook.py)
+- [Sample-data tests](https://github.com/DataTideHH/excel-to-sql-data-workflows/blob/main/tests/test_sample_data.py)
+- [Expected-result tests](https://github.com/DataTideHH/excel-to-sql-data-workflows/blob/main/tests/test_expected_results.py)
+- [Workbook generator](https://github.com/DataTideHH/excel-to-sql-data-workflows/blob/main/scripts/generate_excel_workbook.py)
 
 ---
 
@@ -131,8 +131,8 @@ Read [Semantic Differences](semantic-differences.md) for the full discussion.
 1. Scan the [comparison matrix](comparison-matrix.md).
 2. Read [Semantic Differences](semantic-differences.md).
 3. Inspect the source data under [`data/raw`](https://github.com/DataTideHH/excel-to-sql-data-workflows/tree/main/data/raw) and expected outputs under [`data/expected`](https://github.com/DataTideHH/excel-to-sql-data-workflows/tree/main/data/expected).
-4. Compare the [Excel workbook](../excel/excel_sql_workflows.xlsx) with the [T-SQL equivalents](../sql/03_excel_sql_equivalents.sql).
-5. Review the [DAX measures](../power-bi/dax-measures.md) and [Power Query M](../power-bi/power-query-m.md).
+4. Compare the [Excel workbook](https://github.com/DataTideHH/excel-to-sql-data-workflows/raw/main/excel/excel_sql_workflows.xlsx) with the [T-SQL equivalents](https://github.com/DataTideHH/excel-to-sql-data-workflows/blob/main/sql/03_excel_sql_equivalents.sql).
+5. Review the [DAX measures](https://github.com/DataTideHH/excel-to-sql-data-workflows/blob/main/power-bi/dax-measures.md) and [Power Query M](https://github.com/DataTideHH/excel-to-sql-data-workflows/blob/main/power-bi/power-query-m.md).
 6. Inspect the automated tests and successful Windows/Ubuntu CI matrix.
 
 ---
