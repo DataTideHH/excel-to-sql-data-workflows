@@ -1,0 +1,8 @@
+product_id,product_name,category,list_price,legacy_sku
+P001,Wireless Mouse,Accessories,24.00,LEG-AC-01
+P002,Mechanical Keyboard,Accessories,79.00,LEG-AC-02
+P003,USB-C Dock,Peripherals,129.00,LEG-PR-01
+P004,27in Monitor,Displays,269.00,LEG-DP-01
+P005,Noise Cancelling Headset,Audio,149.00,LEG-AU-01
+P006,Portable SSD 1TB,Storage,139.00,LEG-PR-01
+P007,Webcam 4K,Peripherals,99.00,LEG-PR-03

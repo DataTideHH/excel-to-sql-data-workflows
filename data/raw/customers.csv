@@ -1,0 +1,13 @@
+customer_id,customer_name,region,segment,crm_lookup_code
+C001,Northwind Outfitters,North,Retail,CRM-NORTH-1
+C002,Harbor Supply Co,West,Wholesale,CRM-WEST-1
+C003,Blue Ridge Stores,East,Retail,CRM-EAST-1
+C004,Prairie Goods,Central,Enterprise,CRM-CENTRAL-1
+C005,Summit Retail Group,North,Enterprise,CRM-NORTH-2
+C006,Citywide Shop,South,Retail,CRM-SOUTH-1
+C007,Delta Industrial,South,Wholesale,CRM-SOUTH-2
+C008,Maple Home,East,Retail,CRM-EAST-2
+C009,Evergreen Markets,West,Retail,CRM-WEST-2
+C010,Pioneer Commerce,Central,Wholesale,CRM-CENTRAL-2
+C011,Lakeside Outfit,North,Retail,CRM-NORTH-1
+C012,Harbor Supply Co,South,Enterprise,CRM-SOUTH-3

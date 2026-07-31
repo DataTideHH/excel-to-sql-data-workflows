@@ -1,0 +1,4 @@
+entity,duplicate_value,duplicate_count
+customers.crm_lookup_code,CRM-NORTH-1,2
+products.legacy_sku,LEG-PR-01,2
+orders.source_order_ref,WEB-1017,3
